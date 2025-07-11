@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 import smtplib
 from email.message import EmailMessage
 import csv
+import os
+
+
 
 url = "https://www.shmu.sk/sk/?page=765&station_id=7950"
 
@@ -31,8 +34,8 @@ with open("prijemci.csv","r") as file:
 
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
-    your_email = "noreplydunajec@gmail.com"
-    your_password = ""  # Replace with your actual password
+    your_email = os.getenv("GMAIL_USER")
+    your_password = os.getenv("GMAIL_PASSWORD")
 
     with smtplib.SMTP(smtp_server, smtp_port) as server:
         server.starttls()
