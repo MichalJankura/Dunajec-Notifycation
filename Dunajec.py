@@ -5,10 +5,8 @@ from email.message import EmailMessage
 import csv
 import os
 
-
-
+# 1. Stiahnutie dát z SHMU
 url = "https://www.shmu.sk/sk/?page=765&station_id=7950"
-
 response = requests.get(url)
 response.raise_for_status()
 
@@ -19,26 +17,29 @@ first_row = table.find("tbody").find("tr")
 cells = first_row.find_all("td")
 data = [cell.get_text(strip=True) for cell in cells]
 
-message = f"Dátum: {data[0]} Hladina: {data[1]} Teplota: {data[2]}"
-# print(message)
+message = f"Dátum: {data[0]}\nHladina: {data[1]} cm\nTeplota: {data[2]} °C"
 
-# Email configuration
-with open("prijemci.csv","r") as file:
+# 2. Načítanie príjemcov z CSV
+with open("prijemci.csv", "r") as file:
     reader = csv.reader(file)
-    recipients = [row[0] for row in reader if row]  # Read email addresses from CSV
+    recipients = [row[0] for row in reader if row]
 
-    sprava = EmailMessage()
-    sprava["Subject"] = f"📢 Upozornenie: 🌊Hladina Dunajca je {data[1]} cm!"
-    sprava["From"] = "noreplydunajec@gmail.com"
-    sprava["To"] = recipients
+# 3. Nastavenie emailu
+sprava = EmailMessage()
+sprava["Subject"] = f"📢 Upozornenie: 🌊 Hladina Dunajca je {data[1]} cm!"
+sprava["From"] = os.getenv("GMAIL_USER")
+sprava["To"] = ", ".join(recipients)
+sprava.set_content(message)
 
-    smtp_server = "smtp.gmail.com"
-    smtp_port = 587
-    your_email = os.getenv("GMAIL_USER")
-    your_password = os.getenv("GMAIL_PASSWORD")
+# 4. Odoslanie emailu
+smtp_server = "smtp.gmail.com"
+smtp_port = 587
+your_email = os.getenv("GMAIL_USER")
+your_password = os.getenv("GMAIL_PASSWORD")
 
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()
-        server.login(your_email, your_password)
-        server.send_message(sprava)
+with smtplib.SMTP(smtp_server, smtp_port) as server:
+    server.starttls()
+    server.login(your_email, your_password)
+    server.send_message(sprava)
 
+print("✅ Email odoslaný na adresy:", ", ".join(recipients))
