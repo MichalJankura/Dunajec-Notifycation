@@ -10,7 +10,7 @@ url = "https://www.shmu.sk/sk/?page=765&station_id=7950"
 response = requests.get(url)
 response.raise_for_status()
 
-soup = BeautifulSoup(response.text, "lxml")
+soup = BeautifulSoup(response.text, "html.parser")
 table = soup.find("table", class_="dynamictable w600 center stripped")
 
 first_row = table.find("tbody").find("tr")
