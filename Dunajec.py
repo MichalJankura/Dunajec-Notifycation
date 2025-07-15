@@ -4,6 +4,7 @@ import smtplib
 from email.message import EmailMessage
 import csv
 import os
+from dotenv import load_dotenv
 
 # 1. Stiahnutie dát z SHMU
 url = "https://www.shmu.sk/sk/?page=765&station_id=7950"
@@ -34,6 +35,7 @@ sprava.set_content(message)
 # 4. Odoslanie emailu
 smtp_server = "smtp.gmail.com"
 smtp_port = 587
+load_dotenv()
 your_email = os.getenv("GMAIL_USER")
 your_password = os.getenv("GMAIL_PASSWORD")
 
