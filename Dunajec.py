@@ -6,6 +6,8 @@ import csv
 import os
 from dotenv import load_dotenv
 
+
+
 # 1. Stiahnutie dát z SHMU
 url = "https://www.shmu.sk/sk/?page=765&station_id=7950"
 response = requests.get(url)
@@ -28,7 +30,7 @@ with open("prijemci.csv", "r") as file:
 # 3. Nastavenie emailu
 sprava = EmailMessage()
 sprava["Subject"] = f"📢 Upozornenie: 🌊 Hladina Dunajca je {data[1]} cm!"
-sprava["From"] = os.getenv("GMAIL_USER")
+sprava["From"] = os.environ.get("GMAIL_USER")
 sprava["To"] = ", ".join(recipients)
 sprava.set_content(message)
 
@@ -36,8 +38,8 @@ sprava.set_content(message)
 smtp_server = "smtp.gmail.com"
 smtp_port = 587
 load_dotenv()
-your_email = os.getenv("GMAIL_USER")
-your_password = os.getenv("GMAIL_PASSWORD")
+your_email = os.environ.get("GMAIL_USER")
+your_password = os.environ.get("GMAIL_PASSWORD")
 
 with smtplib.SMTP(smtp_server, smtp_port) as server:
     server.starttls()
