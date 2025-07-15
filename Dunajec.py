@@ -20,7 +20,7 @@ first_row = table.find("tbody").find("tr")
 cells = first_row.find_all("td")
 data = [cell.get_text(strip=True) for cell in cells]
 
-#message = f"Dátum: {data[0]}\nHladina: {data[1]} cm\nTeplota: {data[2]} °C"
+message = ""
 
 # 2. Načítanie príjemcov z CSV
 with open("prijemci.csv", "r") as file:
@@ -32,7 +32,7 @@ sprava = EmailMessage()
 sprava["Subject"] = f"📢 Upozornenie: 🌊 Hladina Dunajca je {data[1]} cm!"
 sprava["From"] = os.environ.get("GMAIL_USER")
 sprava["To"] = ", ".join(recipients)
-#sprava.set_content(message)
+sprava.set_content(message)
 
 # 4. Odoslanie emailu
 smtp_server = "smtp.gmail.com"
@@ -44,6 +44,6 @@ your_password = os.environ.get("GMAIL_PASSWORD")
 with smtplib.SMTP(smtp_server, smtp_port) as server:
     server.starttls()
     server.login(your_email, your_password)
-    server.send_message()
+    server.send_message(sprava)
 
 print("✅ Email odoslaný na adresy:", ", ".join(recipients))
