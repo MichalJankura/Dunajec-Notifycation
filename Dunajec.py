@@ -51,7 +51,7 @@ str_hladina = data[1]
 int_hladina = int(str_hladina)
 if  (int_hladina <= 20):
     sent_info()
-else if(int_hladina >=45):
+elif int_hladina >= 45:
     sent_info()
 else:
     print("Hladina je v norme")
