@@ -22,28 +22,38 @@ data = [cell.get_text(strip=True) for cell in cells]
 
 message = ""
 
-# 2. Načítanie príjemcov z CSV
-with open("prijemci.csv", "r") as file:
-    reader = csv.reader(file)
-    recipients = [row[0] for row in reader if row]
+def sent_info():
+    # 2. Načítanie príjemcov z CSV
+    with open("prijemci.csv", "r") as file:
+        reader = csv.reader(file)
+        recipients = [row[0] for row in reader if row]
+    
+    # 3. Nastavenie emailu
+    sprava = EmailMessage()
+    sprava["Subject"] = f"📢 Upozornenie: 🌊 Hladina Dunajca je {data[1]} cm!"
+    sprava["From"] = os.environ.get("GMAIL_USER")
+    sprava["To"] = ", ".join(recipients)
+    sprava.set_content(message)
+    
+    # 4. Odoslanie emailu
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+    load_dotenv()
+    your_email = os.environ.get("GMAIL_USER")
+    your_password = os.environ.get("GMAIL_PASSWORD")
+    
+    with smtplib.SMTP(smtp_server, smtp_port) as server:
+        server.starttls()
+        server.login(your_email, your_password)
+        server.send_message(sprava)
 
-# 3. Nastavenie emailu
-sprava = EmailMessage()
-sprava["Subject"] = f"📢 Upozornenie: 🌊 Hladina Dunajca je {data[1]} cm!"
-sprava["From"] = os.environ.get("GMAIL_USER")
-sprava["To"] = ", ".join(recipients)
-sprava.set_content(message)
-
-# 4. Odoslanie emailu
-smtp_server = "smtp.gmail.com"
-smtp_port = 587
-load_dotenv()
-your_email = os.environ.get("GMAIL_USER")
-your_password = os.environ.get("GMAIL_PASSWORD")
-
-with smtplib.SMTP(smtp_server, smtp_port) as server:
-    server.starttls()
-    server.login(your_email, your_password)
-    server.send_message(sprava)
-
-print("✅ Email odoslaný na adresy:", ", ".join(recipients))
+str_hladina = data[1]
+int_hladina = int(str_hladina)
+if  int_hladina <= 20 :
+    sent_info()
+else if int_hladina >=45:
+    sent_info()
+else:
+    print("Hladina je v norme")
+    exit(0)
+    
